@@ -56,7 +56,7 @@ Linked Compression Chamber now gives the Crank Gun 3 effective dodges (was 1 pre
 
 Linked Compression Chamber now has increased movement speed when firing or spinning the barrel of the Crank Gun (was 20% default, now 75%).
 
-## Known Issues
+## Known Issues:
 
 In Weaves it is possible for the Engineer to hold a total of 5 bombs in the final event after entering the portal with 3 bombs (experimental version only).
 
