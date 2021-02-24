@@ -1,4 +1,4 @@
-# EngineerTweaksV2
+# Engineer Tweaks
 
 **engiex.lua** is the experimental version of the mod and has the most recent changes.
 
