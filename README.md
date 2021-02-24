@@ -1,10 +1,10 @@
 # EngineerTweaksV2
 
-engiex.lua is the experimental version of the mod and has the most recent changes.
+**engiex.lua** is the experimental version of the mod and has the most recent changes.
 
-krazedkirbengi.lua is the current version of the mod found on the Steam Workshop.
+**krazedkirbengi.lua** is the current version of the mod found on the Steam Workshop.
 
-Changes:
+## Changes:
 The Ability Bar now regenerates passively over time.
 
 The Engineer now keeps Pressure stacks after the Ability Bar is full.
@@ -29,7 +29,7 @@ Linked Compression Chamber now gives the Crank Gun 3 effective dodges (was 1 pre
 
 Linked Compression Chamber now has increased movement speed when firing or spinning the barrel of the Crank Gun (was 20% default, now 75%).
 
-Experimental version changes:
+## Experimental version changes:
 
 The Ability Bar now regenerates passively over time.
 
