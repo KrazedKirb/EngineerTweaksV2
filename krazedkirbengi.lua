@@ -84,18 +84,52 @@ ProcFunctions.bardin_engineer_remove_pump_stacks_on_fire = function(player, buff
 		ProcFunctions.bardin_engineer_remove_pump_stacks(player, buff, params)
   end
 end
---[allow passive ability regen and allow stacks to persist after reaching full ability bar]:
+--[allow ability regen from melee and ranged attacks]:
 PassiveAbilitySettings.dr_4.buffs = {
+	"bardin_engineer_passive_no_ability_regen",
 	"bardin_engineer_passive_ranged_power_aura",
 	"bardin_engineer_passive_max_ammo",
-	"bardin_engineer_remove_pump_stacks_fire"
+	"bardin_engineer_remove_pump_stacks_fire",
+	"kerillian_waywatcher_ability_cooldown_on_hit",
+	"victor_zealot_ability_cooldown_on_damage_taken"
 }
---[allow engineer to use crossbow]:
+--[allow engineer to use crossbow in all modes]:
 ItemMasterList.dr_crossbow.can_wield = {
 	"dr_ironbreaker",
 	"dr_ranger",
 	"dr_engineer"
 }
+ItemMasterList.dr_crossbow_magic_01.can_wield = {
+	"dr_ironbreaker",
+	"dr_ranger",
+	"dr_engineer"
+}
+local function add_career_to_weapon_group(weapons, career)
+	for _, weapon in ipairs(weapons) do
+		local weapon_group_can_wield = DeusWeaponGroups[weapon].can_wield
+
+		if not table.contains(weapon_group_can_wield, career) then
+			table.insert(weapon_group_can_wield, career)
+		end
+	end
+end
+if DLCSettings.cog then
+	add_career_to_weapon_group({
+		"dr_1h_axe",
+		"dr_2h_hammer",
+		"dr_1h_hammer",
+		"dr_2h_axe",
+		"dr_2h_pick",
+		"dr_shield_axe",
+		"dr_shield_hammer",
+		"dr_dual_wield_hammers",
+		"dr_rakegun",
+		"dr_handgun",
+		"dr_drakegun",
+		"dr_drake_pistol",
+		"dr_crossbow"
+	}, "dr_engineer")
+end
 --[regular crank gun uninterruptible]:
 Weapons.bardin_engineer_career_skill_weapon.actions.action_one.default.uninterruptible = true
 Weapons.bardin_engineer_career_skill_weapon.actions.action_one.spin.uninterruptible = true
@@ -131,6 +165,89 @@ DamageProfileTemplates.engineer_ability_shot_armor_pierce.armor_modifier_far.att
 	0.5,
 	0.4
 }
+--[Bombardier gives bombs at start]:
+SimpleInventoryExtension.extensions_ready = function(self, world, unit)
+    local first_person_extension = ScriptUnit.extension(unit, "first_person_system")
+    self.first_person_extension = first_person_extension
+    self._first_person_unit = first_person_extension:get_first_person_unit()
+    self.buff_extension = ScriptUnit.extension(unit, "buff_system")
+    local career_extension = ScriptUnit.extension(unit, "career_system")
+    self.career_extension = career_extension
+    local talent_extension = ScriptUnit.has_extension(unit, "talent_system")
+    self.talent_extension = talent_extension
+    local equipment = self._equipment
+    local profile = self._profile
+    local unit_1p = self._first_person_unit
+    local unit_3p = self._unit
+
+    self:add_equipment_by_category("weapon_slots")
+    self:add_equipment_by_category("enemy_weapon_slots")
+
+    local skill_index = (talent_extension and talent_extension:get_talent_career_skill_index()) or 1
+    local weapon_index = talent_extension and talent_extension:get_talent_career_weapon_index()
+    self.initial_inventory.slot_career_skill_weapon = career_extension:career_skill_weapon_name(skill_index,
+                                                          weapon_index)
+
+    self:add_equipment_by_category("career_skill_weapon_slots")
+
+    local additional_inventory = self.initial_inventory.additional_items
+
+
+    local has_bombardier = self.buff_extension:has_buff_type("bardin_engineer_upgraded_grenades")
+	additional_inventory = additional_inventory or {}
+    if has_bombardier and additional_inventory then
+        table.append(additional_inventory, {{
+            slot_name = "slot_grenade",
+            item_name = "grenade_frag_02"
+        }, {
+            slot_name = "slot_grenade",
+            item_name = "grenade_fire_02"
+        }})
+    else
+		additional_inventory = {}
+    end
+    if additional_inventory then
+        for i = 1, #additional_inventory, 1 do
+            local additional_item = additional_inventory[i]
+            local slot_name = additional_item.slot_name
+            local item_data = ItemMasterList[additional_item.item_name]
+            local slot_data = self:get_slot_data(slot_name)
+
+            if slot_data then
+                self:store_additional_item(slot_name, item_data)
+            else
+                self:add_equipment(slot_name, item_data)
+            end
+        end
+    end
+
+    Unit.set_data(self._first_person_unit, "equipment", self._equipment)
+
+    if profile.default_wielded_slot then
+        local default_wielded_slot = profile.default_wielded_slot
+        local slot_data = self._equipment.slots[default_wielded_slot]
+
+        if not slot_data then
+            table.dump(self._equipment.slots, "self._equipment.slots", 1)
+            Application.error("Tried to wield default slot %s for %s that contained no weapon.", default_wielded_slot,
+                career_extension:career_name())
+        end
+
+        self:_wield_slot(equipment, slot_data, unit_1p, unit_3p)
+
+        local item_data = slot_data.item_data
+        local item_template = BackendUtils.get_item_template(item_data)
+
+        self:_spawn_attached_units(item_template.first_person_attached_units)
+
+        local backend_id = item_data.backend_id
+        local buffs = self:_get_property_and_trait_buffs(backend_id)
+
+        self:apply_buffs(buffs, "wield", item_data.name, default_wielded_slot)
+    end
+
+    self._equipment.wielded_slot = profile.default_wielded_slot
+end
 --[Updated Linked Compression Chamber movement + dodge after spinning or firing gun]:
 ActionCareerDREngineerSpin.client_owner_start_action = function (self, new_action, t)
 	ActionCareerDREngineerSpin.super.client_owner_start_action(self, new_action, t)
@@ -153,7 +270,7 @@ ActionCareerDREngineerSpin.client_owner_start_action = function (self, new_actio
 		Weapons.bardin_engineer_career_skill_weapon.actions.action_one.spin.buff_data = {
 			{
 				start_time = 0,
-				external_multiplier = 0.75,
+				external_multiplier = 0.6,
 				buff_name = "planted_fast_decrease_movement",
 				end_time = math.huge
 			}
@@ -161,7 +278,7 @@ ActionCareerDREngineerSpin.client_owner_start_action = function (self, new_actio
 		Weapons.bardin_engineer_career_skill_weapon.actions.action_one.base_fire.buff_data = {
 			{
 				start_time = 0,
-				external_multiplier = 0.75,
+				external_multiplier = 0.6,
 				buff_name = "planted_fast_decrease_movement",
 				end_time = math.huge
 			}
@@ -169,7 +286,7 @@ ActionCareerDREngineerSpin.client_owner_start_action = function (self, new_actio
 		Weapons.bardin_engineer_career_skill_weapon.actions.action_two.default.buff_data = {
 			{
 				start_time = 0,
-				external_multiplier = 0.75,
+				external_multiplier = 0.6,
 				buff_name = "planted_fast_decrease_movement",
 				end_time = math.huge
 			}
@@ -177,7 +294,7 @@ ActionCareerDREngineerSpin.client_owner_start_action = function (self, new_actio
 		Weapons.bardin_engineer_career_skill_weapon.actions.action_two.charged.buff_data = {
 			{
 				start_time = 0,
-				external_multiplier = 0.75,
+				external_multiplier = 0.6,
 				buff_name = "planted_fast_decrease_movement",
 				end_time = math.huge
 			}
@@ -218,5 +335,26 @@ ActionCareerDREngineerSpin.client_owner_start_action = function (self, new_actio
 		}
 	end
 end
+--[Engi gets ult from melee + ranged but NOT crank gun]:
+ProcFunctions.reduce_activated_ability_cooldown = function (player, buff, params)
+	local player_unit = player.player_unit
+	local inventory_extension = ScriptUnit.extension(player_unit, "inventory_system")
+	local wielded_slot = inventory_extension:get_wielded_slot_name()
+	if Unit.alive(player_unit) then
+		local attack_type = params[2]
+		local target_number = params[4]
+		local career_extension = ScriptUnit.extension(player_unit, "career_system")
+
+		if not attack_type or attack_type == "heavy_attack" or attack_type == "light_attack" then
+			career_extension:reduce_activated_ability_cooldown(buff.bonus)
+		elseif target_number and target_number == 1 then
+			if wielded_slot == "slot_career_skill_weapon" then
+				return
+			end
+				career_extension:reduce_activated_ability_cooldown(buff.bonus)
+		end
+	end
+end
+mod:echo("[Engineer Tweaks]: Active")
 -- Your mod code goes here.
 -- https://vmf-docs.verminti.de
