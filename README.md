@@ -36,3 +36,5 @@ Bombardier now increases bomb explosion radius and fire duration by 25%.
 In Weaves it is possible for the Engineer to hold a total of 5 bombs in the final event after entering the portal with 3 bombs.
 
 If the Engineer has Linked Compression Chamber the Crank Gun must be spun or fired for the number of effective dodges and movement speed to be updated. This can result in rare cases where the Engineer has one effective dodge instead of the intended three if they attempt to dodge with the Crank Gun without having used it.
+
+Clients using Bombardier are not granted the free bombs at the beginning of the level.
