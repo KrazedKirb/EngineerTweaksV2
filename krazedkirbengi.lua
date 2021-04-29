@@ -90,7 +90,7 @@ PassiveAbilitySettings.dr_4.buffs = {
 	"bardin_engineer_passive_ranged_power_aura",
 	"bardin_engineer_passive_max_ammo",
 	"bardin_engineer_remove_pump_stacks_fire",
-	"kerillian_waywatcher_ability_cooldown_on_hit",
+	"sienna_unchained_ability_cooldown_on_hit",
 	"victor_zealot_ability_cooldown_on_damage_taken"
 }
 --[allow engineer to use crossbow in all modes]:
