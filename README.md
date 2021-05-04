@@ -38,3 +38,6 @@ In Weaves it is possible for the Engineer to hold a total of 5 bombs in the fina
 If the Engineer has Linked Compression Chamber the Crank Gun must be spun or fired for the number of effective dodges and movement speed to be updated. This can result in rare cases where the Engineer has one effective dodge instead of the intended three if they attempt to dodge with the Crank Gun without having used it.
 
 Clients using Bombardier are not granted the free bombs at the beginning of the level.
+
+Getting kills with the Crank Gun equipped will reduce Pressure stacks on applicable talents, even if the kill was not from the Crank Gun (for example, having the Crank Gun out while a Fire Bomb is burning will reduce Pressure stacks for each kill you get).
+
