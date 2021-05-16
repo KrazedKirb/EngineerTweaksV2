@@ -25,17 +25,25 @@ Quality of Life and buffs for the Outcast Engineer. Wouldn't have been possible 
 
 - Linked Compression Chamber now has increased movement speed when firing or spinning the barrel of the Crank Gun (was 20% default, now 60%).
 
+- Linked Compression Chamber effective range increased (was 25 now 35) but has stronger damage falloff (power distribution was 0.125 now 0.03125).
+
+- Innovative Ammo Hoppers effective range increased (was 25 now 35).
+
 - Gromril-Plated Shot super-armor damage increased to 40% (was 20% default).
+
+- Gromril-Plated Shot now has increased range (was 25 now 100) and tighter spread when stationary (adopted Repeater Handgun spread).
 
 - Bombardier now grants one Tier 2 Frag and one Tier 2 Fire bomb at the start of the level.
 
 - Bombardier now increases bomb explosion radius and fire duration by 25%.
 
+- Piston Power now removes Overcharge slowdown (plus more later probably).
+
 ## Known Issues:
 
 - In Weaves it is possible for the Engineer to hold a total of 5 bombs in the final event after entering the portal with 3 bombs.
 
-- If the Engineer has Linked Compression Chamber the Crank Gun must be spun or fired for the number of effective dodges and movement speed to be updated. This can result in rare cases where the Engineer has one effective dodge instead of the intended three if they attempt to dodge with the Crank Gun without having used it.
+- The Crank Gun barrel must be spun or fired for a given level 30 talent’s stat adjustments to be updated. This can result in rare cases where the Crank Gun does not have the intended number of effective dodges if the Engineer has not yet tried to fire the Crank Gun.
 
 - Clients using Bombardier are not granted the free bombs at the beginning of the level.
 
