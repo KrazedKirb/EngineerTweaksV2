@@ -85,13 +85,33 @@ ProcFunctions.bardin_engineer_remove_pump_stacks_on_fire = function(player, buff
   end
 end
 --[allow ability regen from melee and ranged attacks]:
+BuffTemplates.bardin_engineer_ability_cooldown_on_hit = {
+	buffs = {
+		{
+			event = "on_hit",
+			event_buff = true,
+			buff_func = "reduce_activated_ability_cooldown",
+			bonus = 0.25
+		}
+	}
+}
+BuffTemplates.bardin_engineer_ability_cooldown_on_damage_taken = {
+	buffs = {
+		{
+			event = "on_damage_taken",
+			event_buff = true,
+			buff_func = "reduce_activated_ability_cooldown",
+			bonus = 0.2
+		}
+	}
+}
 PassiveAbilitySettings.dr_4.buffs = {
 	"bardin_engineer_passive_no_ability_regen",
 	"bardin_engineer_passive_ranged_power_aura",
 	"bardin_engineer_passive_max_ammo",
 	"bardin_engineer_remove_pump_stacks_fire",
-	"sienna_unchained_ability_cooldown_on_hit",
-	"victor_zealot_ability_cooldown_on_damage_taken"
+	"bardin_engineer_ability_cooldown_on_hit",
+	"bardin_ranger_ability_cooldown_on_damage_taken"
 }
 --[allow engineer to use crossbow in all modes]:
 ItemMasterList.dr_crossbow.can_wield = {
@@ -165,6 +185,9 @@ DamageProfileTemplates.engineer_ability_shot_armor_pierce.armor_modifier_far.att
 	0.5,
 	0.4
 }
+--[Gromril Shots spread + longer range]:
+Weapons.bardin_engineer_career_skill_weapon_special.default_spread_template = "repeating_handgun"
+Weapons.bardin_engineer_career_skill_weapon_special.actions.action_one.armor_pierce_fire.range = 100
 --[Bombardier gives bombs at start]:
 SimpleInventoryExtension.extensions_ready = function(self, world, unit)
     local first_person_extension = ScriptUnit.extension(unit, "first_person_system")
@@ -248,7 +271,7 @@ SimpleInventoryExtension.extensions_ready = function(self, world, unit)
 
     self._equipment.wielded_slot = profile.default_wielded_slot
 end
---[Updated Linked Compression Chamber movement + dodge after spinning or firing gun]:
+--[Updated Linked Compression Chamber movement + dodge + range after spinning or firing gun]:
 ActionCareerDREngineerSpin.client_owner_start_action = function (self, new_action, t)
 	ActionCareerDREngineerSpin.super.client_owner_start_action(self, new_action, t)
 	self:start_audio_loop()
@@ -266,6 +289,11 @@ ActionCareerDREngineerSpin.client_owner_start_action = function (self, new_actio
 
 	if self.talent_extension:has_talent("bardin_engineer_reduced_ability_fire_slowdown") then
 		self._current_windup = 1
+		DamageProfileTemplates.engineer_ability_shot.default_target.power_distribution_far = {
+			attack = 0.03125,
+			impact = 0.05
+		}
+		Weapons.bardin_engineer_career_skill_weapon.actions.action_one.base_fire.range = 35
 		Weapons.bardin_engineer_career_skill_weapon.dodge_count = 3
 		Weapons.bardin_engineer_career_skill_weapon.actions.action_one.spin.buff_data = {
 			{
@@ -300,6 +328,11 @@ ActionCareerDREngineerSpin.client_owner_start_action = function (self, new_actio
 			}
 		}
 	else
+		DamageProfileTemplates.engineer_ability_shot.default_target.power_distribution_far = {
+			attack = 0.125,
+			impact = 0.05
+		}
+		Weapons.bardin_engineer_career_skill_weapon.actions.action_one.base_fire.range = 35
 		Weapons.bardin_engineer_career_skill_weapon.dodge_count = 1
 		Weapons.bardin_engineer_career_skill_weapon.actions.action_one.spin.buff_data = {
 			{
@@ -354,6 +387,17 @@ ProcFunctions.reduce_activated_ability_cooldown = function (player, buff, params
 				career_extension:reduce_activated_ability_cooldown(buff.bonus)
 		end
 	end
+end
+--[Piston Power No Overheat Slowdown + Reduce Push Cost at overcharge threshold]:
+BuffTemplates.bardin_engineer_piston_powered.buffs[1].perk = "overcharge_no_slow"
+--[make thingies work in the networklookup thingy]:
+for buff_name, _ in pairs(BuffTemplates) do
+    local indexed = table.contains(NetworkLookup.buff_templates, buff_name)
+    if not indexed then
+        local index = #NetworkLookup.buff_templates + 1
+        NetworkLookup.buff_templates[index] = buff_name
+        NetworkLookup.buff_templates[buff_name] = index
+    end
 end
 mod:echo("[Engineer Tweaks]: Active")
 -- Your mod code goes here.
