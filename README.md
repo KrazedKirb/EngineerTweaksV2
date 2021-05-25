@@ -25,7 +25,7 @@ Quality of Life and buffs for the Outcast Engineer. Wouldn't have been possible 
 
 - Linked Compression Chamber now has increased movement speed when firing or spinning the barrel of the Crank Gun (was 20% default, now 60%).
 
-- Linked Compression Chamber effective range increased (was 25 now 35) but has stronger damage falloff (power distribution was 0.125 now 0.03125).
+- Linked Compression Chamber effective range increased (was 25 now 35) but has stronger damage falloff (power distribution was 0.125 now 0.0625).
 
 - Innovative Ammo Hoppers effective range increased (was 25 now 35).
 
