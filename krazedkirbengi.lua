@@ -95,16 +95,6 @@ BuffTemplates.bardin_engineer_ability_cooldown_on_hit = {
 		}
 	}
 }
-BuffTemplates.bardin_engineer_ability_cooldown_on_damage_taken = {
-	buffs = {
-		{
-			event = "on_damage_taken",
-			event_buff = true,
-			buff_func = "reduce_activated_ability_cooldown",
-			bonus = 0.2
-		}
-	}
-}
 PassiveAbilitySettings.dr_4.buffs = {
 	"bardin_engineer_passive_no_ability_regen",
 	"bardin_engineer_passive_ranged_power_aura",
@@ -290,7 +280,7 @@ ActionCareerDREngineerSpin.client_owner_start_action = function (self, new_actio
 	if self.talent_extension:has_talent("bardin_engineer_reduced_ability_fire_slowdown") then
 		self._current_windup = 1
 		DamageProfileTemplates.engineer_ability_shot.default_target.power_distribution_far = {
-			attack = 0.03125,
+			attack = 0.0625,
 			impact = 0.05
 		}
 		Weapons.bardin_engineer_career_skill_weapon.actions.action_one.base_fire.range = 35
@@ -388,7 +378,7 @@ ProcFunctions.reduce_activated_ability_cooldown = function (player, buff, params
 		end
 	end
 end
---[Piston Power No Overheat Slowdown + Reduce Push Cost at overcharge threshold]:
+--[Piston Power No Overheat Slowdown]:
 BuffTemplates.bardin_engineer_piston_powered.buffs[1].perk = "overcharge_no_slow"
 --[make thingies work in the networklookup thingy]:
 for buff_name, _ in pairs(BuffTemplates) do
