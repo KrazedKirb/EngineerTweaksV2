@@ -41,11 +41,7 @@ Quality of Life and buffs for the Outcast Engineer. Wouldn't have been possible 
 
 ## Known Issues:
 
-- In Weaves it is possible for the Engineer to hold a total of 5 bombs in the final event after entering the portal with 3 bombs.
-
 - The Crank Gun barrel must be spun or fired for a given level 30 talent’s stat adjustments to be updated. This can result in rare cases where the Crank Gun does not have the intended number of effective dodges if the Engineer has not yet tried to fire the Crank Gun.
 
 - Clients using Bombardier are not granted the free bombs at the beginning of the level.
-
-- Getting kills with the Crank Gun equipped will reduce Pressure stacks on applicable talents, even if the kill was not from the Crank Gun (for example, having the Crank Gun out while a Fire Bomb is burning will reduce Pressure stacks for each kill you get).
 
