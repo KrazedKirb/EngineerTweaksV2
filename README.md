@@ -35,8 +35,6 @@ Quality of Life and buffs for the Outcast Engineer. Wouldn't have been possible 
 
 - Bombardier now grants one Tier 2 Frag and one Tier 2 Fire bomb at the start of the level.
 
-- Bombardier now increases bomb explosion radius and fire duration by 25%.
-
 - Piston Power now removes Overcharge slowdown (plus more later probably).
 
 ## Known Issues:
